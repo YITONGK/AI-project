@@ -136,6 +136,7 @@ class Board:
                 color_code = "\033[34m"
             return f"{bold_code}{color_code}{str}\033[0m"
 
+        # print("\n\n",  self._state,  "\n\n")
         dim = BOARD_N
         output = ""
         for row in range(dim * 2 - 1):
