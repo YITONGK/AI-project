@@ -6,6 +6,7 @@ from referee.game import \
 from referee.game import Board
 from .minimax_search import assign_utility
 from .random_search import random_search
+from .greedy_search import greedy_search
 from .utils import get_action_list
 
 # This is the entry point for your game playing agent. Currently, the agent
@@ -39,8 +40,8 @@ class Agent:
                 # action = SpawnAction(HexPos(3, 3))
                 curr_board = board
                 red_action_list = get_action_list(curr_board, PlayerColor.RED)
-                action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
-                action = random_search(red_action_list)
+                red_action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
+                action = greedy_search(red_action_list, red_action_dict)
                 # red_action_list.clear()
                 # for i in range(len(red_action_list)):
                 #     print(i, ": ", red_action_list[i], "---", action_dict[red_action_list[i]])
@@ -53,7 +54,7 @@ class Agent:
                 # action = SpawnAction(HexPos(3, 2))
                 curr_board = board
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
-                action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
+                blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
                 action = random_search(blue_action_list)
                 # blue_action_list.clear()
                 # action = SpreadAction(HexPos(3, 3), HexDir.Up)
