@@ -2,12 +2,11 @@
 # Project Part B: Game Playing Agent
 
 from referee.game import \
-    PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
-from referee.game import Board
-from .minimax_search import assign_utility
+    PlayerColor, Action, SpawnAction, SpreadAction, Board, HexPos, HexDir
 from .random_search import random_search
 from .greedy_search import greedy_search
-from .utils import get_action_list
+from .minimax_search import minimax_search
+from .utils import get_action_list, assign_utility
 
 # This is the entry point for your game playing agent. Currently, the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -55,7 +54,8 @@ class Agent:
                 curr_board = board
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
                 blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
-                action = random_search(blue_action_list)
+                action = greedy_search(blue_action_list, blue_action_dict)
+                # action = random_search(blue_action_list)
                 # blue_action_list.clear()
                 # action = SpreadAction(HexPos(3, 3), HexDir.Up)
                 # print(state, "\n\n")
