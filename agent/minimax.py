@@ -2,7 +2,7 @@ from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, 
 from referee.game.board import CellState
 
 from referee.game.constants import *
-
+from spread import spread
 
 def get_action_list(curr_board: Board, color: PlayerColor) -> list[Action]:
     curr_state = curr_board._state
@@ -57,10 +57,10 @@ def apply_action(temp_state: dict, action: Action, color: PlayerColor):
     if type(action) == SpreadAction:
         spread(temp_state, action)
 
-def spread(temp_state: dict, action: Action):
-    curr_cell = action.cell
-    direction = action.direction
-    color = temp_state[curr_cell].player
-    power = temp_state[curr_cell].power
-    cell_to_update = []
+# def spread(temp_state: dict, action: Action):
+#     curr_cell = action.cell
+#     direction = action.direction
+#     color = temp_state[curr_cell].player
+#     power = temp_state[curr_cell].power
+#     cell_to_update = []
 
