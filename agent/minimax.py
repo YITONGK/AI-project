@@ -2,7 +2,7 @@ from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, 
 from referee.game.board import CellState
 
 from referee.game.constants import *
-from spread import spread
+from .spread import spread
 
 def get_action_list(curr_board: Board, color: PlayerColor) -> list[Action]:
     curr_state = curr_board._state
