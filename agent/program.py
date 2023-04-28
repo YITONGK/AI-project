@@ -4,7 +4,7 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
 from referee.game import Board
-from .minimax import get_action_list
+from .minimax import get_action_list, assign_utility
 
 # This is the entry point for your game playing agent. Currently, the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -35,9 +35,11 @@ class Agent:
         match self._color:
             case PlayerColor.RED:
                 action = SpawnAction(HexPos(3, 3))
-                action_list = get_action_list(board._state, PlayerColor.RED)
+                curr_board = board
+                action_list = get_action_list(curr_board, PlayerColor.RED)
+                action_dict = assign_utility(curr_board, action_list, PlayerColor.RED)
                 for i in range(len(action_list)):
-                    print(i, ": ", action_list[i])
+                    print(i, ": ", action_list[i], "---", action_dict[action_list[i]])
                 # print(state, "\n\n")
                 # move = translate(action)
                 # update(state, move)
@@ -57,12 +59,13 @@ class Agent:
         Update the agent with the last player's action.
         """
         board.apply_action(action)
-        curr_board = board._state
+        curr_state = board._state
 
-        # for key in curr_board:
-        #     print(key.q, key.r, curr_board[key])
+        # for key in curr_state:
+        #     print(key, curr_state[key])
 
-        print(curr_board)
+        # print(curr_state)
+        print_state(curr_state)
 
         # action_list = get_action_list(curr_board, PlayerColor.RED)
         # for i in range(len(action_list)):
@@ -78,8 +81,14 @@ class Agent:
 
 
 
-def print_action(action):
+def print_action(action: Action):
     if type(action) == SpawnAction:
         print(action.cell)
     if type(action) == SpreadAction:
         print(action.cell, action.direction)
+
+def print_state(curr_state: dict):
+    print("current board state:")
+    for key in curr_state:
+        if curr_state[key].player != None:
+            print(key, curr_state[key])
