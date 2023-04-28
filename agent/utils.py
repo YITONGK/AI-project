@@ -13,7 +13,7 @@ def get_action_list(curr_board: Board, color: PlayerColor) -> list[Action]:
             for direction in HexDir:
                 action_list.append(SpreadAction(coord, direction))
     # add spawn action
-    if curr_board._total_power < 49:
+    if curr_board._total_power < MAX_TOTAL_POWER:
         for r in range(BOARD_N):
             for q in range(BOARD_N):
                 if curr_state[HexPos(r, q)].player == None:

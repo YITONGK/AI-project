@@ -2,7 +2,7 @@ from referee.game import Action, HexPos, HexDir
 from referee.game.board import CellState
 
 
-def spread(temp_state: dict[HexPos, CellState], action: Action):
+def spread(temp_state: dict[HexPos, CellState], action: Action) -> None:
     cell = action.cell
     curr_cell = cell
     direction = action.direction

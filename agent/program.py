@@ -94,13 +94,14 @@ class Agent:
                 pass
 
 
-
+# use to debug
 def print_action(action: Action):
     if type(action) == SpawnAction:
         print(action.cell)
     if type(action) == SpreadAction:
         print(action.cell, action.direction)
 
+# use to debug
 def print_state(curr_state: dict):
     print("current board state:")
     for key in curr_state:
