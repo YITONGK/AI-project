@@ -41,7 +41,7 @@ class Agent:
                 red_action_list = get_action_list(curr_board, PlayerColor.RED)
                 action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
                 action = random_search(red_action_list)
-                red_action_list.clear()
+                # red_action_list.clear()
                 # for i in range(len(red_action_list)):
                 #     print(i, ": ", red_action_list[i], "---", action_dict[red_action_list[i]])
                 # print(state, "\n\n")
@@ -55,7 +55,7 @@ class Agent:
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
                 action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
                 action = random_search(blue_action_list)
-                blue_action_list.clear()
+                # blue_action_list.clear()
                 # action = SpreadAction(HexPos(3, 3), HexDir.Up)
                 # print(state, "\n\n")
                 # return action
@@ -89,13 +89,14 @@ class Agent:
                 pass
 
 
-
+# use for test bug
 def print_action(action: Action):
     if type(action) == SpawnAction:
         print(action.cell)
     if type(action) == SpreadAction:
         print(action.cell, action.direction)
 
+# use for test bug
 def print_state(curr_state: dict):
     print("current board state:")
     for key in curr_state:

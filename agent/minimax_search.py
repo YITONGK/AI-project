@@ -1,10 +1,10 @@
 from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, HexDir, Action
 from referee.game.board import CellState
 
-from referee.game.constants import *
-from .spread import spread
+from .utils import apply_action
 
-def minimax():
+
+def minimax(action_list: list[Action], curr_board: Board):
     return
 
 # assign utility value to each action in the list and return as a dict
@@ -35,17 +35,7 @@ def calculate_power_difference(state: dict[HexPos, CellState], color: PlayerColo
             oppo_power += cellstate.power
     return my_power - oppo_power
 
-def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: PlayerColor):
-    if type(action) == SpawnAction:
-        cellState = CellState(color, 1)
-        temp_state[action.cell] = cellState
-    if type(action) == SpreadAction:
-        spread(temp_state, action)
-    # match type(action):
-    #     case SpawnAction:
-    #         cellState = CellState(color, 1)
-    #         temp_state[action.cell] = cellState
-    #     case SpreadAction:
-    #         spread(temp_state, action)
+
+
 
 
