@@ -2,12 +2,12 @@ from referee.game import Action, HexPos, HexDir
 from referee.game.board import CellState
 
 
-def spread(temp_state: dict, action: Action):
+def spread(temp_state: dict[HexPos, CellState], action: Action):
     cell = action.cell
     curr_cell = cell
     direction = action.direction
-    color = temp_state[curr_cell].player
-    power = temp_state[curr_cell].power
+    color = temp_state[cell].player
+    power = temp_state[cell].power
     cell_to_update = []
     max_power = 7
     # in this function we don't make edition on original board, so make a copy

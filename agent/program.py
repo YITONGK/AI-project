@@ -42,8 +42,8 @@ class Agent:
                 action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
                 action = random_search(red_action_list)
                 red_action_list.clear()
-                # for i in range(len(action_list)):
-                #     print(i, ": ", action_list[i], "---", action_dict[action_list[i]])
+                # for i in range(len(red_action_list)):
+                #     print(i, ": ", red_action_list[i], "---", action_dict[red_action_list[i]])
                 # print(state, "\n\n")
                 # move = translate(action)
                 # update(state, move)

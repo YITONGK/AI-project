@@ -24,7 +24,7 @@ def calculate_utility(curr_board: Board, action: Action, color: PlayerColor) -> 
     final_power_difference = calculate_power_difference(temp_state, color)
     return final_power_difference - initial_power_difference
 
-def calculate_power_difference(state: dict, color: PlayerColor):
+def calculate_power_difference(state: dict[HexPos, CellState], color: PlayerColor):
     my_power = 0
     oppo_power = 0
     for key in state:
@@ -35,7 +35,7 @@ def calculate_power_difference(state: dict, color: PlayerColor):
             oppo_power += cellstate.power
     return my_power - oppo_power
 
-def apply_action(temp_state: dict, action: Action, color: PlayerColor):
+def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: PlayerColor):
     if type(action) == SpawnAction:
         cellState = CellState(color, 1)
         temp_state[action.cell] = cellState
