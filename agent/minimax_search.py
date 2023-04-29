@@ -37,17 +37,16 @@ def calculate_power_difference(state: dict[HexPos, CellState], color: PlayerColo
     return my_power - oppo_power
 
 def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: PlayerColor) -> None:
-    if type(action) == SpawnAction:
-        spawn(temp_state, action, color)
-        # cellState = CellState(color, 1)
-        # temp_state[action.cell] = cellState
-    if type(action) == SpreadAction:
-        spread(temp_state, action)
-    # match type(action):
-    #     case SpawnAction:
-    #         cellState = CellState(color, 1)
-    #         temp_state[action.cell] = cellState
-    #     case SpreadAction:
-    #         spread(temp_state, action)
+    # if type(action) == SpawnAction:
+    #     spawn(temp_state, action, color)
+    #     # cellState = CellState(color, 1)
+    #     # temp_state[action.cell] = cellState
+    # if type(action) == SpreadAction:
+    #     spread(temp_state, action)
+    match action:
+        case SpawnAction():
+            spawn(temp_state, action, color)
+        case SpreadAction():
+            spread(temp_state, action)
 
 
