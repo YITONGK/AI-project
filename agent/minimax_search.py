@@ -3,10 +3,10 @@ import random
 from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, HexDir, Action
 from referee.game.board import CellState
 import copy
-
 from referee.game.constants import *
 from .spread import spread
 from .utils import get_action_list
+
 
 
 def minimax(curr_board, action_list) -> Action:
@@ -26,12 +26,17 @@ def minimax(curr_board, action_list) -> Action:
             max_eva = move[0]
             chosen_action = move[1]
 
+    if max_eva == -999:
+        chosen_action = random.choice(action_list)
     return chosen_action
 
 def iterate_nodes(curr_board,action_list,level) -> int:
-    max_eva = -999
+    if level % 2 == 0:
+        eva_num = -999
+    else:
+        eva_num = 999
     action_evaluation = []
-    if level < 2:
+    if level < 6:
         for action in action_list:
             new_board = copy.copy(curr_board)
             action_list = get_action_list(new_board, new_board.turn_color)
@@ -41,11 +46,13 @@ def iterate_nodes(curr_board,action_list,level) -> int:
     else:
         action_dict = assign_utility(curr_board, action_list, curr_board._turn_color)
         for action in action_dict:
-            if action_dict[action] > max_eva:
-                max_eva = action_dict[action];
-        return max_eva
-    return 0
+            if (action_dict[action] > eva_num) and (level % 2 == 0):
+                eva_num = action_dict[action]
+            elif (action_dict[action] < eva_num) and (level % 2 != 0):
+                eva_num = action_dict[action]
 
+        return eva_num
+    return 0
 
 
 # assign utility value to each action in the list and return as a dict
