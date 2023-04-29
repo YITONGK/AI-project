@@ -8,6 +8,7 @@ from .greedy_search import greedy_search
 from .minimax_search import assign_utility
 from .random_search import random_search
 from .utils import get_action_list
+from .minimax_search import minimax
 
 # This is the entry point for your game playing agent. Currently, the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -41,7 +42,8 @@ class Agent:
                 curr_board = board
                 red_action_list = get_action_list(curr_board, PlayerColor.RED)
                 red_action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
-                action = greedy_search(red_action_list, red_action_dict)
+                action = minimax(curr_board,red_action_list)
+                #action = greedy_search(red_action_list, red_action_dict)
                 # action = random_search(red_action_list)
                 red_action_list.clear()
                 red_action_dict.clear()
@@ -57,7 +59,8 @@ class Agent:
                 curr_board = board
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
                 blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
-                action = greedy_search(blue_action_list, blue_action_dict)
+                action = minimax(curr_board, blue_action_list)
+                #action = greedy_search(blue_action_list, blue_action_dict)
                 # action = random_search(blue_action_list)
                 blue_action_list.clear()
                 blue_action_dict.clear()
