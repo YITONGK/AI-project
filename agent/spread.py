@@ -1,6 +1,9 @@
-from referee.game import Action, HexPos, HexDir
+from referee.game import Action, HexPos, HexDir, PlayerColor
 from referee.game.board import CellState
 
+def spawn(temp_state: dict[HexPos, CellState], action: Action, color: PlayerColor):
+    cellState = CellState(color, 1)
+    temp_state[action.cell] = cellState
 
 def spread(temp_state: dict[HexPos, CellState], action: Action) -> None:
     cell = action.cell

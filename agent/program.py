@@ -65,6 +65,8 @@ class Agent:
                 # print(state, "\n\n")
                 # return action
         # print_action(action)
+        print(*referee)
+        print(referee["time_remaining"], "      ", referee["space_remaining"], "        ", referee["space_limit"])
         return action
 
 

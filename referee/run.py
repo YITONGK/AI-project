@@ -153,7 +153,7 @@ async def game_user_wait(
 
 async def output_board_updates(
     stream: LogStream,
-    use_color: bool=False,
+    use_color: bool=True,
     use_unicode: bool=False,
     width: int=66
 ) -> AsyncGenerator:
@@ -169,7 +169,8 @@ async def output_board_updates(
                 stream.info(
                     '\n'.join([f"{'':<7}{l}" for l in
                         board.render(
-                            use_color=use_color,
+                            True,
+                            #use_color=use_color,
                             use_unicode=use_unicode,
                         ).splitlines()
                     ])

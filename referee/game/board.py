@@ -126,7 +126,7 @@ class Board:
         layout corresponds to the axial coordinate system as described in the
         game specification document.
         """
-        def apply_ansi(str, bold=True, color=None):
+        def apply_ansi(str, bold=False, color=None):
             # Helper function to apply ANSI color codes
             bold_code = "\033[1m" if bold else ""
             color_code = ""
@@ -154,6 +154,7 @@ class Board:
                     else:
                         output += text
                 else:
+                    # output += "(" + str(r) + "," + str(q) + ")"
                     output += " .. "
                 output += "    "
             output += "\n"
