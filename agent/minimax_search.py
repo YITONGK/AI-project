@@ -35,11 +35,11 @@ def minimax(curr_board, action_list) -> Action:
 
 def iterate_nodes(curr_board,action_list,level) -> int:
     if level % 2 == 0:
-        eva_num = 999
-    else:
         eva_num = -999
+    else:
+        eva_num = 999
     action_evaluation = []
-    if level < 3:
+    if level < 2:
         for action in action_list:
             if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
                 new_board = copy.copy(curr_board)
@@ -51,16 +51,81 @@ def iterate_nodes(curr_board,action_list,level) -> int:
     else:
         action_dict = assign_utility(curr_board, action_list, curr_board.turn_color)
         for action in action_dict:
-            if (action_dict[action] < eva_num) and (level % 2 == 0):
+            if (action_dict[action] > eva_num) and (level % 2 == 0):
                 eva_num = action_dict[action]
-            elif (action_dict[action] > eva_num) and (level % 2 != 0):
+            elif (action_dict[action] < eva_num) and (level % 2 != 0):
                 eva_num = action_dict[action]
         return eva_num
 
     if level % 2 == 0:
-        return min(action_evaluation)
-    else:
         return max(action_evaluation)
+    else:
+        return min(action_evaluation)
+
+def ab_minimax(curr_board, action_list) -> Action:
+    max_eva = -999
+    chosen_action = random.choice(action_list)
+    b = -999
+# for each move in the subtree, iterate the possible nodes
+    for action in action_list:
+        if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
+            new_board = copy.copy(curr_board)
+            new_board.apply_action(action)
+            action_list = get_action_list(new_board,new_board.turn_color)
+            cur_ult = ab_iterate_nodes(new_board,action_list,1,b)
+
+            if cur_ult > b:
+                b = cur_ult
+                chosen_action = ((cur_ult,action))
+            new_board.undo_action()
+
+    if b == 0:
+        chosen_action = random.choice(action_list)
+    return chosen_action
+
+def ab_iterate_nodes(curr_board,action_list,level,pre_b) -> int:
+    if level < 2:
+        for action in action_list:
+            if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
+                new_board = copy.copy(curr_board)
+                new_board.apply_action(action)
+                action_list = get_action_list(new_board, new_board.turn_color)
+                cur_ult = ab_iterate_nodes(new_board, action_list, level + 1, pre_b)
+                if level % 2 == 0:
+                    if cur_ult < pre_b:
+                        a = cur_ult
+                        break
+                    else:
+                        if cur_ult < a:
+                            a = cur_ult
+                else:
+                    if cur_ult < pre_b:
+                        b = cur_ult
+                        break
+                    else:
+                        b = cur_ult
+                new_board.undo_action()
+        if level % 2 == 0:
+            return a
+        else:
+            return b
+    else:
+        for action in action_list:
+            new_board = copy.copy(curr_board)
+            new_board.apply_action(action)
+            cur_heuristic = heuristic(curr_board)
+            new_board.undo_action()
+            return cur_heuristic
+
+def heuristic(board: Board) -> int:
+
+    if board.turn_color == PlayerColor.RED:
+        heuristic_num =board._color_power(PlayerColor.BLUE) - board._color_power(PlayerColor.RED)
+    else:
+        heuristic_num = board._color_power(PlayerColor.RED) - board._color_power(PlayerColor.BLUE)
+
+    return heuristic_num
+
 
 
 # assign utility value to each action in the list and return as a dict
@@ -116,9 +181,9 @@ def win_or_lose(curr_board : Board,action : Action,player_color : PlayerColor) -
     blue_power = curr_board._color_power(PlayerColor.BLUE)
     curr_board.undo_action()
     if red_power == 0 or blue_power == 0:
-        if (red_power == 0 and PlayerColor == "RED") or (blue_power == 0 and player_color == "BLUE"):
+        if (red_power == 0 and PlayerColor.RED == player_color) or (blue_power == 0 and player_color == PlayerColor.BLUE):
             return "lose"
-        elif(red_power == 0 and PlayerColor == "BLUE") or (blue_power == 0 and PlayerColor == "RED"):
+        elif(red_power == 0 and PlayerColor.BLUE == player_color) or (blue_power == 0 and PlayerColor.RED == player_color):
             return "win"
     else:
         return "continue"
