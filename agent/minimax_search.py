@@ -12,7 +12,7 @@ from .utils import get_action_list
 def minimax(curr_board, action_list) -> Action:
     action_evaluation = []
     max_eva = -999
-    chosen_action = random.choice(action_list)
+    chosen_actions = []
 # for each move in the subtree, iterate the possible nodes
     for action in action_list:
         if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
@@ -27,10 +27,15 @@ def minimax(curr_board, action_list) -> Action:
     for move in action_evaluation:
         if move[0] > max_eva:
             max_eva = move[0]
-            chosen_action = move[1]
+
+    for move in action_evaluation:
+        if move[0] == max_eva:
+            chosen_actions.append(move[1])
 
     if max_eva == -999:
         chosen_action = random.choice(action_list)
+    else:
+        chosen_action = random.choice(chosen_actions)
     return chosen_action
 
 def iterate_nodes(curr_board,action_list,level) -> int:
@@ -42,11 +47,16 @@ def iterate_nodes(curr_board,action_list,level) -> int:
     if level < 2:
         for action in action_list:
             if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
+                cur_action_evaluation = []
                 new_board = copy.copy(curr_board)
                 new_board.apply_action(action)
                 action_list = get_action_list(new_board, new_board.turn_color)
                 cur_ult = iterate_nodes(new_board, action_list, level + 1)
-                action_evaluation.append(cur_ult)
+                cur_action_evaluation.append(cur_ult)
+                if level % 2 == 0:
+                    action_evaluation.append(max(cur_action_evaluation))
+                else:
+                    action_evaluation.append(min(cur_action_evaluation))
                 new_board.undo_action()
     else:
         action_dict = assign_utility(curr_board, action_list, curr_board.turn_color)
@@ -76,7 +86,7 @@ def ab_minimax(curr_board, action_list) -> Action:
 
             if cur_ult > b:
                 b = cur_ult
-                chosen_action = ((cur_ult,action))
+                chosen_action = action
             new_board.undo_action()
 
     if b == 0:
@@ -84,14 +94,17 @@ def ab_minimax(curr_board, action_list) -> Action:
     return chosen_action
 
 def ab_iterate_nodes(curr_board,action_list,level,pre_b) -> int:
-    if level < 2:
+    a = 999
+    b = -999
+    if level < 5:
         for action in action_list:
             if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
                 new_board = copy.copy(curr_board)
                 new_board.apply_action(action)
                 action_list = get_action_list(new_board, new_board.turn_color)
                 cur_ult = ab_iterate_nodes(new_board, action_list, level + 1, pre_b)
-                if level % 2 == 0:
+                new_board.undo_action()
+                if level % 2 != 0:
                     if cur_ult < pre_b:
                         a = cur_ult
                         break
@@ -103,8 +116,8 @@ def ab_iterate_nodes(curr_board,action_list,level,pre_b) -> int:
                         b = cur_ult
                         break
                     else:
-                        b = cur_ult
-                new_board.undo_action()
+                        if b < cur_ult:
+                            b = cur_ult
         if level % 2 == 0:
             return a
         else:

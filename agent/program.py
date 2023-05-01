@@ -5,7 +5,7 @@ from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
 from referee.game import Board
 from .greedy_search import greedy_search
-from .minimax_search import assign_utility
+from .minimax_search import assign_utility, ab_minimax
 from .random_search import random_search
 from .utils import get_action_list
 from .minimax_search import minimax
@@ -42,7 +42,7 @@ class Agent:
                 curr_board = board
                 red_action_list = get_action_list(curr_board, PlayerColor.RED)
                 red_action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
-                action = minimax(curr_board,red_action_list)
+                action = ab_minimax(curr_board, red_action_list)
                 #action = greedy_search(red_action_list, red_action_dict)
                 # action = random_search(red_action_list)
                 red_action_list.clear()
