@@ -26,7 +26,6 @@ def minimax(curr_board, action_list) -> Action:
 # find move with max evaluation value
     for move in action_evaluation:
         if move[0] > max_eva:
-            print(move)
             max_eva = move[0]
             chosen_action = move[1]
 
@@ -36,11 +35,11 @@ def minimax(curr_board, action_list) -> Action:
 
 def iterate_nodes(curr_board,action_list,level) -> int:
     if level % 2 == 0:
-        eva_num = -999
-    else:
         eva_num = 999
+    else:
+        eva_num = -999
     action_evaluation = []
-    if level < 2:
+    if level < 3:
         for action in action_list:
             if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
                 new_board = copy.copy(curr_board)
@@ -52,13 +51,16 @@ def iterate_nodes(curr_board,action_list,level) -> int:
     else:
         action_dict = assign_utility(curr_board, action_list, curr_board.turn_color)
         for action in action_dict:
-            if (action_dict[action] > eva_num) and (level % 2 == 0):
+            if (action_dict[action] < eva_num) and (level % 2 == 0):
                 eva_num = action_dict[action]
-            elif (action_dict[action] < eva_num) and (level % 2 != 0):
+            elif (action_dict[action] > eva_num) and (level % 2 != 0):
                 eva_num = action_dict[action]
         return eva_num
-    eva_num = max(action_evaluation)
-    return eva_num
+
+    if level % 2 == 0:
+        return min(action_evaluation)
+    else:
+        return max(action_evaluation)
 
 
 # assign utility value to each action in the list and return as a dict
@@ -76,7 +78,13 @@ def calculate_utility(curr_board: Board, action: Action, color: PlayerColor) -> 
     # temp_board.apply_action(action)
     apply_action(temp_state, action, color)
     final_power_difference = calculate_power_difference(temp_state, color)
-    return final_power_difference - initial_power_difference
+    result = win_or_lose(curr_board, action, curr_board.turn_color)
+    if result == "win":
+        return 999
+    elif result == "lose":
+        return -999
+    else:
+        return final_power_difference - initial_power_difference
 
 def calculate_power_difference(state: dict[HexPos, CellState], color: PlayerColor) -> int:
     my_power = 0
@@ -102,17 +110,16 @@ def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: Pla
     #     case SpreadAction:
     #         spread(temp_state, action)
 
-def game_over(state: dict[HexPos, CellState], color: PlayerColor) -> bool:
-    my_token = 0
-    oppo_token = 0
-    for key, value in state.items():
-        if value.player == color:
-            my_token += 1
-        if value.player == color.opponent:
-            oppo_token += 1
-    if my_token == 0 and oppo_token != 0:
-        return True
-    if oppo_token == 0 and my_token != 0:
-        return True
+def win_or_lose(curr_board : Board,action : Action,player_color : PlayerColor) -> str:
+    curr_board.apply_action(action)
+    red_power = curr_board._color_power(PlayerColor.RED)
+    blue_power = curr_board._color_power(PlayerColor.BLUE)
+    curr_board.undo_action()
+    if red_power == 0 or blue_power == 0:
+        if (red_power == 0 and PlayerColor == "RED") or (blue_power == 0 and player_color == "BLUE"):
+            return "lose"
+        elif(red_power == 0 and PlayerColor == "BLUE") or (blue_power == 0 and PlayerColor == "RED"):
+            return "win"
     else:
-        return False
+        return "continue"
+
