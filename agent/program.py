@@ -33,19 +33,19 @@ class Agent:
         """
         Return the next action to take.
         """
-        # state[(3, 3)] = ("r", 1)
-        # state[(3, 2)] = ("b", 1)
         match self._color:
             case PlayerColor.RED:
-                # action = SpawnAction(HexPos(3, 3))
                 curr_board = board
                 red_action_list = get_action_list(curr_board, PlayerColor.RED)
-                red_action_dict = assign_utility_2(curr_board, red_action_list, PlayerColor.RED)
-                action = greedy_search(red_action_list, red_action_dict)
-                # action = ab_minimax(curr_board, red_action_list)
-                # action = random_search(red_action_list)
-                red_action_list.clear()
-                red_action_dict.clear()
+                if board.turn_count < 2:
+                    action = random_search(red_action_list)
+                else:
+                    red_action_dict = assign_utility_2(curr_board, red_action_list, PlayerColor.RED)
+                    # action = greedy_search(red_action_list, red_action_dict)
+                    action = ab_minimax(curr_board, red_action_list)
+                    # action = random_search(red_action_list)
+                    red_action_list.clear()
+                    red_action_dict.clear()
                 # for i in range(len(red_action_list)):
                 #     print(i, ": ", red_action_list[i], "---", action_dict[red_action_list[i]])
                 # print(state, "\n\n")
@@ -53,15 +53,16 @@ class Agent:
                 # update(state, move)
                 # return action
             case PlayerColor.BLUE:
-                # This is going to be invalid... BLUE never spawned!
-                # action = SpawnAction(HexPos(3, 2))
                 curr_board = board
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
-                blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
-                action = greedy_search(blue_action_list, blue_action_dict)
-                # action = random_search(blue_action_list)
-                blue_action_list.clear()
-                blue_action_dict.clear()
+                if board.turn_count < 2:
+                    action = random_search(blue_action_list)
+                else:
+                    blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
+                    action = greedy_search(blue_action_list, blue_action_dict)
+                    # action = random_search(blue_action_list)
+                    blue_action_list.clear()
+                    blue_action_dict.clear()
                 # action = SpreadAction(HexPos(3, 3), HexDir.Up)
                 # print(state, "\n\n")
                 # return action

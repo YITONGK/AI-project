@@ -95,7 +95,7 @@ def ab_minimax(curr_board, action_list) -> Action:
 def ab_iterate_nodes(curr_board,action_list,level,pre_b) -> int:
     a = 999
     b = -999
-    if level < 5:
+    if level < 3:
         for action in action_list:
             if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
                 new_board = copy.copy(curr_board)
