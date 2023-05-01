@@ -15,10 +15,14 @@ def minimax(curr_board, action_list) -> Action:
     chosen_action = random.choice(action_list)
 # for each move in the subtree, iterate the possible nodes
     for action in action_list:
-        new_board = copy.copy(curr_board)
-        action_list = get_action_list(new_board,new_board.turn_color)
-        cur_ult = iterate_nodes(new_board,action_list,1)
-        action_evaluation.append((cur_ult,action))
+        if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
+            new_board = copy.copy(curr_board)
+            new_board.apply_action(action)
+            action_list = get_action_list(new_board,new_board.turn_color)
+            cur_ult = iterate_nodes(new_board,action_list,1)
+            action_evaluation.append((cur_ult,action))
+            new_board.undo_action()
+
 
 # find move with max evaluation value
     for move in action_evaluation:
@@ -36,13 +40,15 @@ def iterate_nodes(curr_board,action_list,level) -> int:
     else:
         eva_num = 999
     action_evaluation = []
-    if level < 6:
+    if level < 2:
         for action in action_list:
-            new_board = copy.copy(curr_board)
-            action_list = get_action_list(new_board, new_board.turn_color)
-            cur_ult = iterate_nodes(new_board, action_list, level + 1)
-            action_evaluation.append((cur_ult, action))
-
+            if (curr_board._total_power < 49) or ((curr_board._total_power >= 49) and action != SpawnAction):
+                new_board = copy.copy(curr_board)
+                new_board.apply_action(action)
+                action_list = get_action_list(new_board, new_board.turn_color)
+                cur_ult = iterate_nodes(new_board, action_list, level + 1)
+                action_evaluation.append((cur_ult, action))
+                new_board.undo_action()
     else:
         action_dict = assign_utility(curr_board, action_list, curr_board._turn_color)
         for action in action_dict:

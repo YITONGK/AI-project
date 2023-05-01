@@ -59,8 +59,8 @@ class Agent:
                 curr_board = board
                 blue_action_list = get_action_list(curr_board, PlayerColor.BLUE)
                 blue_action_dict = assign_utility(curr_board, blue_action_list, PlayerColor.BLUE)
-                action = minimax(curr_board, blue_action_list)
-                #action = greedy_search(blue_action_list, blue_action_dict)
+                #action = minimax(curr_board, blue_action_list)
+                action = greedy_search(blue_action_list, blue_action_dict)
                 # action = random_search(blue_action_list)
                 blue_action_list.clear()
                 blue_action_dict.clear()
