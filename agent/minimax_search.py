@@ -43,10 +43,27 @@ def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: Pla
     #     # temp_state[action.cell] = cellState
     # if type(action) == SpreadAction:
     #     spread(temp_state, action)
+    new_state = temp_state.copy()
     match action:
         case SpawnAction():
-            spawn(temp_state, action, color)
+            spawn(new_state, action, color)
         case SpreadAction():
-            spread(temp_state, action)
+            spread(new_state, action)
+    return new_state
+
+def game_over(state: dict[HexPos, CellState], color: PlayerColor) -> bool:
+    my_token = 0
+    oppo_token = 0
+    for key, value in state.items():
+        if value.player == color:
+            my_token += 1
+        if value.player == color.opponent:
+            oppo_token += 1
+    if my_token == 0 and oppo_token != 0:
+        return True
+    if oppo_token == 0 and my_token != 0:
+        return True
+    else:
+        return False
 
 
