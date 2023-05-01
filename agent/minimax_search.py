@@ -23,10 +23,10 @@ def minimax(curr_board, action_list) -> Action:
             action_evaluation.append((cur_ult,action))
             new_board.undo_action()
 
-
 # find move with max evaluation value
     for move in action_evaluation:
         if move[0] > max_eva:
+            print(move)
             max_eva = move[0]
             chosen_action = move[1]
 
@@ -47,18 +47,18 @@ def iterate_nodes(curr_board,action_list,level) -> int:
                 new_board.apply_action(action)
                 action_list = get_action_list(new_board, new_board.turn_color)
                 cur_ult = iterate_nodes(new_board, action_list, level + 1)
-                action_evaluation.append((cur_ult, action))
+                action_evaluation.append(cur_ult)
                 new_board.undo_action()
     else:
-        action_dict = assign_utility(curr_board, action_list, curr_board._turn_color)
+        action_dict = assign_utility(curr_board, action_list, curr_board.turn_color)
         for action in action_dict:
             if (action_dict[action] > eva_num) and (level % 2 == 0):
                 eva_num = action_dict[action]
             elif (action_dict[action] < eva_num) and (level % 2 != 0):
                 eva_num = action_dict[action]
-
         return eva_num
-    return 0
+    eva_num = max(action_evaluation)
+    return eva_num
 
 
 # assign utility value to each action in the list and return as a dict
@@ -102,3 +102,17 @@ def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: Pla
     #     case SpreadAction:
     #         spread(temp_state, action)
 
+def game_over(state: dict[HexPos, CellState], color: PlayerColor) -> bool:
+    my_token = 0
+    oppo_token = 0
+    for key, value in state.items():
+        if value.player == color:
+            my_token += 1
+        if value.player == color.opponent:
+            oppo_token += 1
+    if my_token == 0 and oppo_token != 0:
+        return True
+    if oppo_token == 0 and my_token != 0:
+        return True
+    else:
+        return False
