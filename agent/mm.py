@@ -1,5 +1,5 @@
 import copy
-from random import random
+import random
 
 from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, HexDir, Action
 from referee.game.board import CellState
@@ -24,10 +24,8 @@ def mm(board: Board, depth: int, curr_color: PlayerColor, original_color: Player
             if utility > max_utility:
                 max_utility = utility
                 best_action = action
-            # elif utility == max_utility:
-            #     rand = random.randint(1,99)
-            #     if rand % 2 == 0:
-            #         best_action = action
+            elif utility == max_utility:
+                best_action = random.choice([best_action, action])
         return max_utility, best_action
     else:
         min_utility = float('inf')
@@ -39,10 +37,8 @@ def mm(board: Board, depth: int, curr_color: PlayerColor, original_color: Player
             if utility < min_utility:
                 min_utility = utility
                 best_action = action
-            # elif utility == min_utility:
-            #     rand = random.randint(1,99)
-            #     if rand % 2 == 0:
-            #         best_action = action
+            elif utility == min_utility:
+                best_action = random.choice([best_action, action])
         return min_utility, best_action
 
 
