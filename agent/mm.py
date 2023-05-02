@@ -11,7 +11,6 @@ from .utils import get_action_list
 def mm(board: Board, depth: int, curr_color: PlayerColor, original_color: PlayerColor):
     if depth == 0 or board.game_over:
         return evaluate(board, original_color), None
-
     best_action = None
     action_list = get_action_list(board, curr_color)
     if curr_color == original_color:
@@ -41,8 +40,39 @@ def mm(board: Board, depth: int, curr_color: PlayerColor, original_color: Player
                 best_action = random.choice([best_action, action])
         return min_utility, best_action
 
-
-
+def ab_mm(board: Board, depth: int, alpha: float, beta: float, curr_color: PlayerColor, original_color: PlayerColor):
+    if depth == 0 or board.game_over:
+        return evaluate(board, original_color), None
+    best_action = None
+    action_list = get_action_list(board, curr_color)
+    if curr_color == original_color:
+        value = float('-inf')
+        for action in action_list:
+            new_board = copy.copy(board)
+            new_board.apply_action(action)
+            score, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
+            new_board.undo_action()
+            if score > value:
+                value = score
+                best_action = action
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return value, best_action
+    else:
+        value = float('inf')
+        for action in action_list:
+            new_board = copy.copy(board)
+            new_board.apply_action(action)
+            score, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
+            new_board.undo_action()
+            if score < value:
+                value = score
+                best_action = action
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+        return value, best_action
 
 def evaluate(board: Board, color: PlayerColor):
     if board.game_over:

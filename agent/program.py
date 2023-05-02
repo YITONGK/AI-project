@@ -9,7 +9,7 @@ from .minimax_search import assign_utility, assign_utility_2, ab_minimax, minima
 from .random_search import random_search
 from .utils import get_action_list
 
-from .mm import mm
+from .mm import mm, ab_mm
 
 # This is the entry point for your game playing agent. Currently, the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -45,7 +45,8 @@ class Agent:
                 # else:
                 red_action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
                 # action = ab_minimax(curr_board, red_action_list)
-                action = mm(curr_board, 2, PlayerColor.RED, PlayerColor.RED)[1]
+                # action = mm(curr_board, 2, PlayerColor.RED, PlayerColor.RED)[1]
+                action = ab_mm(curr_board, 4, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
                 # action = random_search(red_action_list)
                 # red_action_list.clear()
                 # red_action_dict.clear()
