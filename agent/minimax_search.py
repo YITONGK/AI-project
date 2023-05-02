@@ -38,7 +38,7 @@ def minimax(curr_board, action_list) -> Action:
     chosen_action = random.choice(chosen_actions)
     return chosen_action
 
-def iterate_nodes(curr_board,action_list,level) -> int:
+def iterate_nodes(curr_board: Board, action_list: list[Action], level: int) -> int:
     if level % 2 == 0:
         eva_num = -999
     else:

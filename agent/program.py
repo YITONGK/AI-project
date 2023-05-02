@@ -44,7 +44,8 @@ class Agent:
                     action = random_search(red_action_list)
                 else:
                     red_action_dict = assign_utility(curr_board, red_action_list, PlayerColor.RED)
-                    action = ab_minimax(curr_board, red_action_list)
+                    # action = ab_minimax(curr_board, red_action_list)
+                    action = mm(curr_board, 3, PlayerColor.RED, PlayerColor.RED)[1]
                     # action = random_search(red_action_list)
                     red_action_list.clear()
                     red_action_dict.clear()
