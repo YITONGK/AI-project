@@ -2,10 +2,7 @@ import copy
 import random
 
 from referee.game import Board, PlayerColor, SpreadAction, SpawnAction, HexPos, HexDir, Action
-from referee.game.board import CellState
 from referee.game.constants import *
-from .minimax_search import game_over
-from .spread import spread, spawn
 from .utils import get_action_list
 
 def mm(board: Board, depth: int, curr_color: PlayerColor, original_color: PlayerColor):
@@ -45,34 +42,37 @@ def ab_mm(board: Board, depth: int, alpha: float, beta: float, curr_color: Playe
         return evaluate(board, original_color), None
     best_action = None
     action_list = get_action_list(board, curr_color)
+    # try to use perfect ordering
+    action_list = sort_action_list(board, action_list, curr_color)
+    # try to use topk
+    action_list = topk(action_list, 20)
+    new_board = copy.copy(board)
     if curr_color == original_color:
-        value = float('-inf')
+        best_utility = float('-inf')
         for action in action_list:
-            new_board = copy.copy(board)
             new_board.apply_action(action)
-            score, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
+            utility, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
             new_board.undo_action()
-            if score > value:
-                value = score
+            if utility > best_utility:
+                best_utility = utility
                 best_action = action
-            alpha = max(alpha, value)
+            alpha = max(alpha, best_utility)
             if alpha >= beta:
                 break
-        return value, best_action
+        return best_utility, best_action
     else:
-        value = float('inf')
+        best_utility = float('inf')
         for action in action_list:
-            new_board = copy.copy(board)
             new_board.apply_action(action)
-            score, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
+            utility, _ = ab_mm(new_board, depth - 1, alpha, beta, curr_color.opponent, original_color)
             new_board.undo_action()
-            if score < value:
-                value = score
+            if utility < best_utility:
+                best_utility = utility
                 best_action = action
-            beta = min(beta, value)
+            beta = min(beta, best_utility)
             if alpha >= beta:
                 break
-        return value, best_action
+        return best_utility, best_action
 
 def evaluate(board: Board, color: PlayerColor):
     if board.game_over:
@@ -81,43 +81,21 @@ def evaluate(board: Board, color: PlayerColor):
         else:
             return float('-inf')
     else:
-        return calculate_utility_2(board._state, color)
-
-
-
-def calculate_utility_2(state: dict[HexPos, CellState], color: PlayerColor) -> float:
-    my_power = 0
-    oppo_power = 0
-    for key, value in state.items():
-        if value.player == color:
-            my_power += value.power
+        my_power = board._color_power(color)
+        oppo_power = board._color_power(color.opponent)
+        # to avoid division by zero error
+        if oppo_power == 0:
+            return 0
         else:
-            oppo_power += value.power
-    if oppo_power == 0:
-        return 0
-    else:
-        return my_power / oppo_power
-
-
-def apply_action(temp_state: dict[HexPos, CellState], action: Action, color: PlayerColor) -> None:
-    new_state = temp_state.copy()
-    match action:
-        case SpawnAction():
-            spawn(new_state, action, color)
-        case SpreadAction():
-            spread(new_state, action)
-    return new_state
-
+            return my_power / oppo_power
 
 def get_action_list(board: Board, color: PlayerColor) -> list[Action]:
     action_list = []
-    total_power = 0
+    total_power = board._total_power
     state = board._state
-    for key, value in state.items():
-        total_power += value.power
     # add spread action
-    for key in state:
-        if state[key].player == color:
+    for key, value in state.items():
+        if value.player == color:
             coord = HexPos(key.r, key.q)
             for direction in HexDir:
                 action_list.append(SpreadAction(coord, direction))
@@ -126,20 +104,22 @@ def get_action_list(board: Board, color: PlayerColor) -> list[Action]:
         for r in range(BOARD_N):
             for q in range(BOARD_N):
                 if state[HexPos(r, q)].player == None:
-                    # print(q,r)
-                    # print(SpawnAction(HexPos(q, r)))
                     action_list.append(SpawnAction(HexPos(r, q)))
     return action_list
 
-def game_over(board: Board) -> bool:
-    """
-    True iff the game is over.
-    """
-    if board.turn_count < 2:
-        return False
+def sort_action_list(board: Board, action_list: list[Action], color: PlayerColor) -> list[Action]:
+    action_utility = []
+    new_board = copy.copy(board)
+    for action in action_list:
+        new_board.apply_action(action)
+        utility = evaluate(new_board, color)
+        new_board.undo_action()
+        action_utility.append((action, utility))
+    # sort the list of tuples according to utility value
+    # and grab the first element in every tuple, combine them into a new list and return
+    sorted_list = sorted(action_utility, key=lambda x: x[1], reverse=True)
+    sorted_action_list = [t[0] for t in sorted_list]
+    return sorted_action_list
 
-    return any([
-        board.turn_count >= MAX_TURNS,
-        board._color_power(PlayerColor.RED) == 0,
-        board._color_power(PlayerColor.BLUE) == 0
-    ])
+def topk(action_list: list[Action], k: int):
+    return action_list[:k]
