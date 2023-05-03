@@ -1,4 +1,6 @@
 import copy
+import random
+
 from referee.game import Board, PlayerColor
 from .action_list import get_action_list, sort_action_list, top_k
 from .utility import evaluate
@@ -24,6 +26,8 @@ def ab_mm(board: Board, depth: int, k: int, alpha: float, beta: float,
             if utility > best_utility:
                 best_utility = utility
                 best_action = action
+            elif utility == best_utility:
+                best_action = random.choice([best_action, action])
             alpha = max(alpha, best_utility)
             if alpha >= beta:
                 break
@@ -37,6 +41,8 @@ def ab_mm(board: Board, depth: int, k: int, alpha: float, beta: float,
             if utility < best_utility:
                 best_utility = utility
                 best_action = action
+            elif utility == best_utility:
+                best_action = random.choice([best_action, action])
             beta = min(beta, best_utility)
             if alpha >= beta:
                 break

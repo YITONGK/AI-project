@@ -35,7 +35,7 @@ class Agent:
         action = None
         match self._color:
             case PlayerColor.RED:
-                action = ab_mm(curr_board, 4, 10, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
+                action = ab_mm(curr_board, 5, 7, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
             case PlayerColor.BLUE:
                 action = ab_mm(curr_board, 5, 7, float('-inf'), float('inf'), PlayerColor.BLUE, PlayerColor.BLUE)[1]
         print(*referee)

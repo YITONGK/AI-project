@@ -10,8 +10,10 @@ def evaluate(board: Board, color: PlayerColor) -> float:
     else:
         my_power = board._color_power(color)
         oppo_power = board._color_power(color.opponent)
+        my_cell = len(board._player_cells(color))
+        oppo_cell = len(board._player_cells(color.opponent))
         # to avoid division by zero error
-        if oppo_power == 0:
+        if oppo_cell == 0:
             return 0
         else:
-            return my_power / oppo_power
+            return 0.34 * (my_power / oppo_power) + my_cell / oppo_cell
