@@ -16,4 +16,4 @@ def evaluate(board: Board, color: PlayerColor) -> float:
         if oppo_cell == 0:
             return 0
         else:
-            return 0.34 * (my_power / oppo_power) + my_cell / oppo_cell
+            return (my_power / oppo_power) + 3 * (my_cell / oppo_cell)

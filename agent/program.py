@@ -12,6 +12,7 @@ from .action_list import get_action_list
 # intended to serve as an example of how to use the referee API -- obviously
 # this is not a valid strategy for actually playing the game!
 
+# initialise a board for our action decision
 board = Board()
 
 
@@ -31,17 +32,17 @@ class Agent:
         """
         Return the next action to take.
         """
-        curr_board = board
         action = None
         match self._color:
             case PlayerColor.RED:
-                action = ab_mm(curr_board, 5, 7, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
+                action = ab_mm(board, 5, 6, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
             case PlayerColor.BLUE:
-                action = ab_mm(curr_board, 5, 7, float('-inf'), float('inf'), PlayerColor.BLUE, PlayerColor.BLUE)[1]
+                action = ab_mm(board, 5, 6, float('-inf'), float('inf'), PlayerColor.BLUE, PlayerColor.BLUE)[1]
         print(*referee)
         print(referee["time_remaining"], "      ", referee["space_remaining"], "        ", referee["space_limit"])
+        # this if statement is to avoid 'unknown action ACK' error
         if action is None:
-            return random.choice(get_action_list(curr_board, self._color))
+            return random.choice(get_action_list(board, self._color))
         return action
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
