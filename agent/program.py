@@ -3,18 +3,16 @@
 import random
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, Board
-from .mm import ab_mm
+from .minimax import minimax
 from .action_list import get_action_list
-
-# This is the entry point for your game playing agent. Currently, the agent
-# simply spawns a token at the centre of the board if playing as RED, and
-# spreads a token at the centre of the board if playing as BLUE. This is
-# intended to serve as an example of how to use the referee API -- obviously
-# this is not a valid strategy for actually playing the game!
 
 # initialise a board for our action decision
 board = Board()
-
+# some constants to be passed to minimax search function
+depth = 5
+k = 6
+alpha = float('-inf')
+beta = float('inf')
 
 class Agent:
     def __init__(self, color: PlayerColor, **referee: dict):
@@ -35,11 +33,9 @@ class Agent:
         action = None
         match self._color:
             case PlayerColor.RED:
-                action = ab_mm(board, 5, 6, float('-inf'), float('inf'), PlayerColor.RED, PlayerColor.RED)[1]
+                action = minimax(board, depth, k, alpha, beta, PlayerColor.RED, PlayerColor.RED)[1]
             case PlayerColor.BLUE:
-                action = ab_mm(board, 5, 6, float('-inf'), float('inf'), PlayerColor.BLUE, PlayerColor.BLUE)[1]
-        print(*referee)
-        print(referee["time_remaining"], "      ", referee["space_remaining"], "        ", referee["space_limit"])
+                action = minimax(board, depth, k, alpha, beta, PlayerColor.BLUE, PlayerColor.BLUE)[1]
         # this if statement is to avoid 'unknown action ACK' error
         if action is None:
             return random.choice(get_action_list(board, self._color))

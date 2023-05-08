@@ -6,8 +6,9 @@ from .action_list import get_action_list, sort_action_list, top_k
 from .utility import evaluate
 
 
-def ab_mm(board: Board, depth: int, k: int, alpha: float, beta: float,
-          curr_color: PlayerColor, original_color: PlayerColor):
+# the minimax search will return a tuple containing the utility value together with a corresponding action
+def minimax(board: Board, depth: int, k: int, alpha: float, beta: float,
+            curr_color: PlayerColor, original_color: PlayerColor):
     # check whether the search should stop
     if depth == 0 or board.game_over:
         return evaluate(board, original_color), None
@@ -24,7 +25,7 @@ def ab_mm(board: Board, depth: int, k: int, alpha: float, beta: float,
         for action in action_list:
             new_board.apply_action(action)
             # Recursively call minimax with next level and opponent
-            utility, _ = ab_mm(new_board, depth - 1, k, alpha, beta, curr_color.opponent, original_color)
+            utility, _ = minimax(new_board, depth - 1, k, alpha, beta, curr_color.opponent, original_color)
             new_board.undo_action()
             # If the new board has a higher evaluation than the current best, update best_utility and the best action
             if utility > best_utility:
@@ -45,7 +46,7 @@ def ab_mm(board: Board, depth: int, k: int, alpha: float, beta: float,
         for action in action_list:
             new_board.apply_action(action)
             # Recursively call minimax with next level and opponent
-            utility, _ = ab_mm(new_board, depth - 1, k, alpha, beta, curr_color.opponent, original_color)
+            utility, _ = minimax(new_board, depth - 1, k, alpha, beta, curr_color.opponent, original_color)
             new_board.undo_action()
             # If the new board has a lower evaluation than the current best, update best_utility and the best action
             if utility < best_utility:
